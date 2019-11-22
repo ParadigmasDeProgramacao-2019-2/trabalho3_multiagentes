@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Random;
+
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -16,12 +18,16 @@ public class Ambiente extends Agent {
 	public int lado = 50;
 	public int qtd_pessoas_total = lado * lado;
 	
-	public double transmissao = 0;
+	public double taxa_transmissao_variante = 0;
 	public int clima;
 	public int saneamento;
 	public AmbienteGUI ambienteGUI;
+	public Random r = new Random();
+	public double taxa_transmissao_geral = 0;
 	
 	public void setup() {		
+		
+		taxa_transmissao_geral = 0.1 + r.nextDouble() * 0.4;
 		
 		 // Register the  service in the yellow pages
 		 System.out.println("Setup Amb");
@@ -41,32 +47,45 @@ public class Ambiente extends Agent {
 		 } 
 		 
 		 
-		 addBehaviour(new TickerBehaviour(this, 2000) {
+		 addBehaviour(new TickerBehaviour(this, 2000 ) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			protected void onTick() {
-				 ACLMessage msg = receive();
 				
-				 if(msg != null) {					
-					 System.out.println("== Resposta" + " <- " 
-							 +  msg.getContent() + " de "
-							 +  msg.getSender().getName());	
+				System.out.println("A taxa de transimissao atual eh: " + taxa_transmissao_geral);
+				
+				
+				ACLMessage msg = receive();
+				
+				 if(msg != null) {	
+					 
 					 if(msg.getContent().equals(new String("Infectar"))) {
 						 infectar();
 					 }
 					 else {
 						 System.out.println("Erro:" + msg.getContent());
 					 }
+					 
+				 } else {
+					 block();
 				 }
 				 
-				 transmissao += 0.1 * qtd_pessoas_infectadas;
-				 System.out.println(transmissao);
+				 taxa_transmissao_variante += taxa_transmissao_geral * qtd_pessoas_infectadas;
+				 System.out.println(taxa_transmissao_variante);
 				 
-				 if(((int) transmissao) > qtd_pessoas_infectadas && ((int) transmissao) < qtd_pessoas_total)
+				 if(((int) taxa_transmissao_variante) > qtd_pessoas_infectadas && ((int) taxa_transmissao_variante) < qtd_pessoas_total)
 					 infectar();
-				 else if(((int) transmissao) >= qtd_pessoas_total)
-		 			block();				 
+				 else if(((int) taxa_transmissao_variante) >= qtd_pessoas_total) {
+					 
+					 if(taxa_transmissao_variante > qtd_pessoas_infectadas) {
+						 taxa_transmissao_variante = qtd_pessoas_total;
+						 infectar();
+					 }
+					 
+					 myAgent.doSuspend();
+				 }
+								 
 			}
 		 });
 	}
@@ -75,8 +94,10 @@ public class Ambiente extends Agent {
 		if(qtd_pessoas_infectadas == 0)
 			ambienteGUI = new AmbienteGUI(qtd_pessoas_total);
 	
-		this.qtd_pessoas_infectadas++;		
-		this.ambienteGUI.mostrarPessoaInfectada();
+		while(qtd_pessoas_infectadas < taxa_transmissao_variante || qtd_pessoas_infectadas == 0) {
+			this.qtd_pessoas_infectadas++;		
+			this.ambienteGUI.mostrarPessoaInfectada();
+		}
 		
 		System.out.println(String.valueOf("Qtd: " + this.qtd_pessoas_infectadas));		
 	}

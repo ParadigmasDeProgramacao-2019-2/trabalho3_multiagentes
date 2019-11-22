@@ -18,7 +18,7 @@ public class AmbienteGUI extends JFrame{
 	private Integer taxaAtualização = 0;
 	
 	public AmbienteGUI(Integer qtd_pessoas){
-		this.setBounds(50, 50, 400, 400);
+		this.setBounds(50, 50, 700, 700);
 		this.setVisible(true);
 		
 		this.lado = (int)(Math.sqrt(qtd_pessoas));
