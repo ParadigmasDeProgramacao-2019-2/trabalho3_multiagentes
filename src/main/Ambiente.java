@@ -2,11 +2,13 @@ package main;
 
 import java.util.Random;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
 import jade.core.behaviours.*;
 
 public class Ambiente extends Agent {
@@ -23,35 +25,44 @@ public class Ambiente extends Agent {
 	public void setup() {
 		
 		
-//		 // Register the  service in the yellow pages
-//		 
-//		 DFAgentDescription dfd = new DFAgentDescription();
-//		 dfd.setName( this.getAID() );
-//		 
-//		 ServiceDescription sd = new ServiceDescription();
-//		 sd.setType( "ambiente" );
-//		 sd.setName( "registrar-ambiente" );
-//		 dfd.addServices(sd);  
-//		 
-//		 try {
-//		   DFService.register(this, dfd);
-//		 }
-//		 catch (FIPAException fe) {
-//		   fe.printStackTrace();
-//		 }
+		 // Register the  service in the yellow pages
+		 
+		 DFAgentDescription dfd = new DFAgentDescription();
+		 dfd.setName( this.getAID() );
+		 
+		 ServiceDescription sd = new ServiceDescription();
+		 sd.setType( "ambiente" );
+		 sd.setName( "registrar-ambiente" );
+		 dfd.addServices(sd);  
+		 
+		 try {
+		   DFService.register(this, dfd);
+		 }
+		 catch (FIPAException fe) {
+		   fe.printStackTrace();
+		 }
+		 
+		 
 		
-		addBehaviour(new TickerBehaviour(this, 500) {
+		addBehaviour(new CyclicBehaviour( this ) {
 			
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onTick() {
-
-				qtd_pessoas_infectadas = new Random().nextInt(5); 
-				System.out.println("Numero de pessoas infectadas: " + qtd_pessoas_infectadas);
+			public void action() {
+				ACLMessage msg = receive();
+				
+				if(msg != null) {
+					
+					System.out.println("== Resposta" + " <- " 
+							 +  msg.getContent() + " de "
+							 +  msg.getSender().getName());
+					
+				}
+				
+				block();
 				
 			}
-			
 		});
 		 
 		
