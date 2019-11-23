@@ -35,16 +35,12 @@ public class Bacteria extends Agent {
 					e.printStackTrace();
 				}
 				
-				System.out.println(result.length + " resultados");
+//				System.out.println(result.length + " resultados");
 				
 				if (result.length > 0) {
-//					System.out.println(" " + result[0].getName());
-					
-					ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-					
+					ACLMessage msg = new ACLMessage(ACLMessage.INFORM);					
 					msg.setContent("Infectar");
-					msg.addReceiver(result[0].getName());		
-					
+					msg.addReceiver(result[0].getName());					
 					send(msg);			
 				}
 				

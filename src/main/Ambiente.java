@@ -14,20 +14,20 @@ public class Ambiente extends Agent {
 
 	private static final long serialVersionUID = 1L;
 	
-	public int qtd_pessoas_infectadas = 0;
 	public int lado = 50;
 	public int qtd_pessoas_total = lado * lado;
+	public int qtd_pessoas_infectadas = 0;
 	
 	public double taxa_transmissao_variante = 0;
-	public int clima;
+	public double taxa_transmissao_geral = 0;
 	public int saneamento;
+	public int clima;
 	public AmbienteGUI ambienteGUI;
 	public Random r = new Random();
-	public double taxa_transmissao_geral = 0;
 	
 	public void setup() {		
 		
-		taxa_transmissao_geral = 0.1 + r.nextDouble() * 0.4;
+		taxa_transmissao_geral = 0.1 + r.nextDouble() * 0.3;
 		
 		 // Register the  service in the yellow pages
 		 System.out.println("Setup Amb");
@@ -44,10 +44,9 @@ public class Ambiente extends Agent {
 		 }
 		 catch (FIPAException fe) {
 		   fe.printStackTrace();
-		 } 
+		 }		 
 		 
-		 
-		 addBehaviour(new TickerBehaviour(this, 2000 ) {
+		 addBehaviour(new TickerBehaviour(this, 2000) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -55,19 +54,18 @@ public class Ambiente extends Agent {
 				
 				System.out.println("A taxa de transimissao atual eh: " + taxa_transmissao_geral);
 				
-				
 				ACLMessage msg = receive();
 				
 				 if(msg != null) {	
 					 
 					 if(msg.getContent().equals(new String("Infectar"))) {
+						 System.out.println("Infectar");
 						 infectar();
-					 }
-					 else {
+					 } else {
 						 System.out.println("Erro:" + msg.getContent());
-					 }
-					 
+					 }					 
 				 } else {
+					 System.out.println("Block");
 					 block();
 				 }
 				 
@@ -81,11 +79,9 @@ public class Ambiente extends Agent {
 					 if(taxa_transmissao_variante > qtd_pessoas_infectadas) {
 						 taxa_transmissao_variante = qtd_pessoas_total;
 						 infectar();
-					 }
-					 
+					 }					 
 					 myAgent.doSuspend();
-				 }
-								 
+				 }								 
 			}
 		 });
 	}
