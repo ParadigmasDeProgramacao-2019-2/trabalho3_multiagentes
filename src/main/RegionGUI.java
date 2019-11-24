@@ -9,6 +9,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -92,19 +93,20 @@ public class RegionGUI extends JFrame {
 	}
 
 	private void updateScreen() {
-		this.table.repaint();
+		SwingUtilities.invokeLater(new Runnable() {//está funcionando
+	         public void run() {
+	          repaint(); //repaint pro Frame
+	         }
+		});
+		/*
 		this.repaint();
-		
+		this.table.repaint();
 		if(rateScreenUpdate == 0) {
 			this.setSize(this.getWidth() + 1, this.getHeight() + 1);
 			rateScreenUpdate = 1;
 		} else {
 			this.setSize(this.getWidth() - 1, this.getHeight() - 1);
 			rateScreenUpdate = 0;
-		}
-			
+		}*/
 	}
-	
-	
-
 }
