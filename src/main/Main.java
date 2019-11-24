@@ -14,8 +14,15 @@ public class Main {
 
 	public static void main(String[] args) {
 		startMainContainer("127.0.0.1", Profile.LOCAL_PORT, "UFABC");
-		addAgent(containerController, "Ambiente", Ambiente.class.getName(), null);
-		addAgent(containerController, "Bacteria", Bacteria.class.getName(), null);		
+		
+		Object[] cold = {(Object) 'C'};
+		Object[] heat = {(Object) 'H'};
+		
+		addAgent(containerController, "Plague", Plague.class.getName(), null);		
+		addAgent(containerController, "RegionCold1", Region.class.getName(), cold);
+		addAgent(containerController, "RegionCold2", Region.class.getName(), cold);
+		addAgent(containerController, "RegionHeat1", Region.class.getName(), heat);
+		addAgent(containerController, "RegionHeat2", Region.class.getName(), heat);
 	}
 	
 	public static void startMainContainer(String host, String port, String name) {

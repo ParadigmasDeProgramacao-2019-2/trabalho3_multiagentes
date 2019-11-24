@@ -12,23 +12,25 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-public class AmbienteGUI extends JFrame{
+public class RegionGUI extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private JTable table;
 	
-	private Integer lado;
-	private Integer taxaAtualizaçãoTela = 0;
-	private ArrayList<Point> posicoes;
+	private Integer side;
+	private Integer rateScreenUpdate = 0;
+	private ArrayList<Point> positions;
 	
-	public AmbienteGUI(Integer qtd_pessoas){
-		this.setBounds(0, 0, 1000, 1000);
+	public RegionGUI(Integer quantityPeople){
+		this.setTitle("RegionGUI");
+		this.setBounds(0, 0, 400, 400);
+		this.setResizable(false);
 		this.setVisible(true);
-		this.lado = (int)(Math.sqrt(qtd_pessoas));		
-		this.posicoes = new ArrayList<>();
+		this.side = (int)(Math.sqrt(quantityPeople));		
+		this.positions = new ArrayList<>();
 		
-		this.table = new JTable(lado, lado){
+		this.table = new JTable(side, side){
 			/**
 			 * 
 			 */
@@ -51,22 +53,22 @@ public class AmbienteGUI extends JFrame{
 	}
 
 	public void mostrarPessoaInfectada() {		
-		Random r = new Random();
-		int linha = r.nextInt(this.lado);
-		int coluna = r.nextInt(this.lado);
+		Random random = new Random();
+		int line = random.nextInt(this.side);
+		int column = random.nextInt(this.side);
 
-		while(posicoes.contains(new Point(linha, coluna))) {
+		while(positions.contains(new Point(line, column))) {
 			System.out.println("Ponto já criado");
-			linha = r.nextInt(this.lado);
-			coluna = r.nextInt(this.lado);
+			line = random.nextInt(this.side);
+			column = random.nextInt(this.side);
 		}
 		
-		System.out.println("Linha: " + linha + " Coluna: " + coluna);
-		this.posicoes.add(new Point(linha, coluna));		
-		table.setValueAt("*", linha, coluna);
+		System.out.println("Linha: " + line + " Coluna: " + column);
+		this.positions.add(new Point(line, column));		
+		table.setValueAt("*", line, column);
 		
 		CellRenderer mcr = new CellRenderer();
-		this.table.getColumnModel().getColumn(coluna).setCellRenderer(mcr);
+		this.table.getColumnModel().getColumn(column).setCellRenderer(mcr);
 		
 		atualizarTela();
 		
@@ -76,12 +78,12 @@ public class AmbienteGUI extends JFrame{
 		this.table.repaint();
 		this.repaint();
 		
-		if(taxaAtualizaçãoTela == 0) {
+		if(rateScreenUpdate == 0) {
 			this.setSize(this.getWidth() + 1, this.getHeight() + 1);
-			taxaAtualizaçãoTela = 1;
+			rateScreenUpdate = 1;
 		} else {
 			this.setSize(this.getWidth() - 1, this.getHeight() - 1);
-			taxaAtualizaçãoTela = 0;
+			rateScreenUpdate = 0;
 		}
 			
 	}
