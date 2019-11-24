@@ -19,6 +19,9 @@ public class CellRenderer extends DefaultTableCellRenderer {
 	    } else if (table.getModel().getValueAt(row, column) != null && table.getModel().getValueAt(row, column).equals(new String("-"))) {
 		      component.setBackground(Color.BLACK);
 		      component.setForeground(Color.BLACK);
+	    } else if (table.getModel().getValueAt(row, column) != null && table.getModel().getValueAt(row, column).equals(new String("+"))) {
+		      component.setBackground(Color.BLUE);
+		      component.setForeground(Color.BLUE);
 	    } else {
 	      component.setBackground(Color.WHITE);
 	    }

@@ -13,11 +13,14 @@ public class Constants {
 	public final static int MIN_PLAGUE_TEMPERATURE_IDEAL = 20;
 	public final static int MAX_PLAGUE_TEMPERATURE_IDEAL = 30;
 	
-	public final static int MIN_PLAGUE_DEATH_POTENTIAL = 20;
-	public final static int MAX_PLAGUE_DEATH_POTENTIAL = 30;
+	public final static int MIN_PLAGUE_DEATH_POTENTIAL = 25;
+	public final static int MAX_PLAGUE_DEATH_POTENTIAL = 35;
 	
 	public final static int MIN_DAYS_TO_FIND_CURE = 40;
 	public final static int MAX_DAYS_TO_FIND_CURE = 60;
+	
+	public final static int MIN_PEOPLE_TO_HEAL = 4;
+	public final static int MAX_PEOPLE_TO_HEAL = 8;
 	
 	public final static int PLAGUE_TEMPERATURE_IDEAL_VARIATION = 5;
 	

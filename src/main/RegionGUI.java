@@ -69,6 +69,18 @@ public class RegionGUI extends JFrame implements Runnable {
 		this.table.getColumnModel().getColumn(column).setCellRenderer(cellRenderer);
 		
 	}
+	
+	public void showHealedPerson(Person person) {		
+		
+		int line = person.getLine();
+		int column = person.getColumn();
+		
+//		System.out.println("Linha: " + line + " Coluna: " + column);
+		table.setValueAt("+", line, column);
+		
+		this.table.getColumnModel().getColumn(column).setCellRenderer(cellRenderer);
+		
+	}
 
 	@Override
 	public void run() {

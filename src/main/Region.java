@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -23,6 +24,7 @@ public class Region extends Agent {
 	private int quantityTotalPeople = Constants.QUANTITY_TOTAL_PEOPLE;
 	private int quantityInfectedPeople = 0;
 	private int quantityDeadPeople = 0;
+	private int quantityHealedPeople = 0;
 	
 	private double rateTransmissionVariable = 0;
 	private double rateTransmissionGeneral = 0;
@@ -36,6 +38,7 @@ public class Region extends Agent {
 	private Random random = new Random();
 	
 	private int daysToFindCure;
+	private int healedPersonsADay;
 	
 	public void setup() {	
 		
@@ -59,6 +62,7 @@ public class Region extends Agent {
 			}
 			
 			daysToFindCure = random.nextInt((Constants.MAX_DAYS_TO_FIND_CURE - Constants.MIN_DAYS_TO_FIND_CURE) + 1) + Constants.MIN_DAYS_TO_FIND_CURE;
+			healedPersonsADay = random.nextInt((Constants.MAX_PEOPLE_TO_HEAL - Constants.MIN_PEOPLE_TO_HEAL) + 1) + Constants.MIN_PEOPLE_TO_HEAL;
 			
 			people = new ArrayList<Person>();
 			
@@ -137,77 +141,89 @@ public class Region extends Agent {
 		protected void onTick() {
 			
 			// TODO: stop com outra condição coerente
-			if (quantityDeadPeople == quantityTotalPeople) { // OU TERMINOU DE RODAR A CURA
+			if (quantityDeadPeople + quantityHealedPeople == quantityTotalPeople) {
 				System.out.println("PARANDO COMPORTAMENTO DayTickerBehaviour (todos infectados)");
 				this.myAgent.doDelete();
 				stop();
 			} else {
-				
-				if (getTickCount() >= daysToFindCure) {
 					// TODO: Implementar a cura
 					// CURA -> diminuiria a proliferação da praga
 					//		-> diminuir em todos as regions
 					//		-> o region que encontrar a cura primeiro tem que dar um jeito de notificar as outras regions
 					//		-> de dia em dia ou em menos, curando tantas pessoas, não vai curar todos instantaneamente, podendo ocasionar mortes no meio deste processo
-				}
-				
-				if (climate == 'H') {
-					temperature = random.nextInt((Constants.MAX_HEAT_TEMPERATURE - Constants.MIN_HEAT_TEMPERATURE) + 1) + Constants.MIN_HEAT_TEMPERATURE;
-				} else if (climate == 'C') {
-					temperature = random.nextInt((Constants.MAX_COLD_TEMPERATURE - Constants.MIN_COLD_TEMPERATURE) + 1) + Constants.MIN_COLD_TEMPERATURE;
-				}
-				
-				System.out.println("TEMPERATURE " + getAID().getName() + " " + temperature);
-				
-				
-				if (plagueDeathPotential == 0 || plagueTemperatureIdeal == 0) {
-					
-					ACLMessage msg = receive();
-					
-					if(msg != null) {	
-						String[] results = msg.getContent().split("-", 2);
-						plagueTemperatureIdeal = Integer.parseInt(results[0]);
-						plagueDeathPotential = Integer.parseInt(results[1]);
-						System.out.println("POTENCIAL DE MORTE " + plagueDeathPotential);
-						System.out.println("TEMPERATURA IDEAL " + plagueTemperatureIdeal);
-					 
-					} else {
-						System.out.println("Block");
-						block();
-					}
-				}
-				
-				for (Person person : people) {
-					if (person.isInfected()) {
-						person.incrementDaysInfected();
-						if (person.getDaysInfected() == plagueDeathPotential) {
-							regionGUI.showDeadPerson(person);
-							person.setDead(true);
-							quantityDeadPeople++;
+					if (getTickCount() >= daysToFindCure) {
+						Collections.shuffle(people);
+						int flag = 0;
+						for (Person p : people) {
+							if (p.isInfected() == true && p.isDead() == false && p.isHealed() == false && flag <= healedPersonsADay) {
+								p.setHealed(true);
+								regionGUI.showHealedPerson(p);
+								flag += 1;
+								quantityHealedPeople++;
+							}
 						}
 					}
-				}
-				
-				System.out.println("A taxa de transimissao atual eh: " + rateTransmissionGeneral);
-				
-				if (temperature >= plagueTemperatureIdeal - Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION &&  temperature <= plagueTemperatureIdeal + Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION) {
-					infect();
 					
-					rateTransmissionVariable += rateTransmissionGeneral * quantityInfectedPeople;
-					System.out.println(rateTransmissionVariable);
+					System.out.println("Pessoas mortas + curadas" + quantityDeadPeople + " + " +quantityHealedPeople);
+				
+					if (climate == 'H') {
+						temperature = random.nextInt((Constants.MAX_HEAT_TEMPERATURE - Constants.MIN_HEAT_TEMPERATURE) + 1) + Constants.MIN_HEAT_TEMPERATURE;
+					} else if (climate == 'C') {
+						temperature = random.nextInt((Constants.MAX_COLD_TEMPERATURE - Constants.MIN_COLD_TEMPERATURE) + 1) + Constants.MIN_COLD_TEMPERATURE;
+					}
 					
-					if(((int) rateTransmissionVariable) > quantityInfectedPeople && ((int) rateTransmissionVariable) < quantityTotalPeople) {
-						infect();
-					} else if(((int) rateTransmissionVariable) >= quantityTotalPeople) {
+					System.out.println("TEMPERATURE " + getAID().getName() + " " + temperature);
+					
+					
+					if (plagueDeathPotential == 0 || plagueTemperatureIdeal == 0) {
 						
-						if(rateTransmissionVariable > quantityInfectedPeople) {
-							rateTransmissionVariable = quantityTotalPeople;
-							infect();
+						ACLMessage msg = receive();
+						
+						if(msg != null) {	
+							String[] results = msg.getContent().split("-", 2);
+							plagueTemperatureIdeal = Integer.parseInt(results[0]);
+							plagueDeathPotential = Integer.parseInt(results[1]);
+							System.out.println("POTENCIAL DE MORTE " + plagueDeathPotential);
+							System.out.println("TEMPERATURA IDEAL " + plagueTemperatureIdeal);
+						 
+						} else {
+							System.out.println("Block");
+							block();
 						}
 					}
-				} else {
-					System.out.println("A temperatura não está ok para proliferar");
-				}
+					
+					for (Person person : people) {
+						if (person.isInfected()) {
+							person.incrementDaysInfected();
+							if (person.getDaysInfected() == plagueDeathPotential && !person.isHealed()) {
+								regionGUI.showDeadPerson(person);
+								person.setDead(true);
+								quantityDeadPeople++;
+							}
+						}
+					}
+					
+					System.out.println("A taxa de transimissao atual eh: " + rateTransmissionGeneral);
+					
+					if (temperature >= plagueTemperatureIdeal - Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION &&  temperature <= plagueTemperatureIdeal + Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION) {
+						infect();
+						
+						rateTransmissionVariable += rateTransmissionGeneral * quantityInfectedPeople;
+						System.out.println(rateTransmissionVariable);
+						
+						if(((int) rateTransmissionVariable) > quantityInfectedPeople && ((int) rateTransmissionVariable) < quantityTotalPeople) {
+							infect();
+						} else if(((int) rateTransmissionVariable) >= quantityTotalPeople) {
+							
+							if(rateTransmissionVariable > quantityInfectedPeople) {
+								rateTransmissionVariable = quantityTotalPeople;
+								infect();
+							}
+						}
+					} else {
+						System.out.println("A temperatura não está ok para proliferar");
+					}
+				
 				
 				
 			}

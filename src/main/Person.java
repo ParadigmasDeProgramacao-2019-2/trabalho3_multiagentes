@@ -7,6 +7,7 @@ public class Person {
 	
 	private Boolean infected;
 	private Integer daysInfected;
+	private Boolean healed;
 	
 	private Boolean dead;
 	
@@ -16,6 +17,7 @@ public class Person {
 		
 		this.infected = false;
 		this.dead = false;
+		this.healed = false;
 		this.daysInfected = 0;
 	}
 	
@@ -54,6 +56,14 @@ public class Person {
 
 	public void setDead(Boolean dead) {
 		this.dead = dead;
+	}
+	
+	public Boolean isHealed() {
+		return healed;
+	}
+
+	public void setHealed(Boolean healed) {
+		this.healed = healed;
 	}
 
 }
