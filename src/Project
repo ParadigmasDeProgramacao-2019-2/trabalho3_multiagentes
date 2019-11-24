@@ -26,14 +26,16 @@ x // MORTE
 x // inicialmente se determinada pessoa estiver com a praga a TANTAS unidades de tempo (ticks)
 x // poderia ter um atributo potencial de morte na praga para indicar quanto de unidade de tempo ela precisa para matar
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// TODO : REGION MANDAR A MENSAGEM COM A TEMPERATURA, 
- 		 PLAGUE VERIFICAR SE ESTA DENTRO DO "IDEAL" E MANDAR A MENSAGEM DE INFECT
-// SE O AMBIENTE NO DIA ESTIVER COM A TEMPERATURA IDEAL
-// CASO NÃO QUISER USAR O CALCULO DIMINUIR O TEMPO DE PROLIFERAÇÃO E A CADA TEMPO INFECTAR UMA PESSOA SÓ RANDOMICAMENTE DO AMBIENTE EM QUE HÁ A TEMPERATURA IDEAL
+x Região mandar a temperatura -> Praga verifica se está proximo do ideal -> se sim a praga manda o infect
+x Região ficaria esperando o infect -> se receber (roda o infect()) -> se não, faz nada (block())
 
-// TODO: DEFINIR QUANTIDADE DE DIAS PARA MORRER COM A PRAGA -> setar um atributo pontecialDeMorte na PRAGA
-// TODO: capturar potencial de dias na region
+x // TODO : REGION MANDAR A MENSAGEM COM A TEMPERATURA, 
+x 		 PLAGUE VERIFICAR SE ESTA DENTRO DO "IDEAL" E MANDAR A MENSAGEM DE INFECT
+x // SE O AMBIENTE NO DIA ESTIVER COM A TEMPERATURA IDEAL
+x // CASO NÃO QUISER USAR O CALCULO DIMINUIR O TEMPO DE PROLIFERAÇÃO E A CADA TEMPO INFECTAR UMA PESSOA SÓ RANDOMICAMENTE DO AMBIENTE EM QUE HÁ A TEMPERATURA IDEAL
+
+x // TODO: DEFINIR QUANTIDADE DE DIAS PARA MORRER COM A PRAGA -> setar um atributo pontecialDeMorte na PRAGA
+x // TODO: capturar potencial de dias na region
 
 // CURA
 // a praga teria um atributo boolean contigenciamento para indicar se foi encontrada a cura ou não para parar de infectar os ambientes

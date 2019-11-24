@@ -16,15 +16,28 @@ public class Plague extends Agent {
 	
 	public Random random = new Random();
 	private int temperatureIdeal = random.nextInt((Constants.MAX_PLAGUE_TEMPERATURE_IDEAL - Constants.MIN_PLAGUE_TEMPERATURE_IDEAL) + 1) + Constants.MIN_PLAGUE_TEMPERATURE_IDEAL;
-	
-	public DFAgentDescription[] result = null;
-	public DFAgentDescription dfd = new DFAgentDescription();
-	public ServiceDescription sd = new ServiceDescription();
+	private int deathPotencial = random.nextInt((30 - 20) + 1) + 20;
 	
 	public void setup() {
 		System.out.println("Setup Plague");
 		System.out.println("Hello! Region-agent "+ getAID().getName() + " is ready.");
 		System.out.println(getAID().getName() + " ideal temperature " + temperatureIdeal);
+		
+		// Register the service in the yellow pages
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName( this.getAID() );
+		 
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType( "plague" );
+		sd.setName( "register-plague" );
+		dfd.addServices(sd);  
+		 
+		try {
+		  DFService.register(this, dfd);
+		}
+		catch (FIPAException fe) {
+		  fe.printStackTrace();
+		}
 		
 		addBehaviour(new InfectTickerBehaviour(this, Constants.TIME_PROLIFERATION_MS));
 
@@ -32,15 +45,20 @@ public class Plague extends Agent {
 	
 	class InfectTickerBehaviour extends TickerBehaviour {
 
+		private static final long serialVersionUID = 1L;
+
 		public InfectTickerBehaviour(Agent a, long period) {
 			super(a, period);
 		}
-
-		private static final long serialVersionUID = 1L;
-
+		
 		@Override
-		protected void onTick() {
+		public void onTick() {
 			
+			DFAgentDescription dfd = new DFAgentDescription();
+			ServiceDescription sd = new ServiceDescription();
+			
+			DFAgentDescription[] result = null;
+
 			sd.setType( "region" );
 			dfd.addServices(sd);
 			
@@ -50,14 +68,11 @@ public class Plague extends Agent {
 				e.printStackTrace();
 			}
 			
-//			System.out.println(result.length + " resultados");
-			
 			if (result.length > 0) {
 				for (DFAgentDescription res : result) {						
 					ACLMessage msg = new ACLMessage(ACLMessage.INFORM);		
 					
-					msg.setContent("Infect");
-//					System.out.println("PRINTANDO O NOME " + res.getName());
+					msg.setContent(String.valueOf(temperatureIdeal) + "-" + String.valueOf(deathPotencial));
 					msg.addReceiver(res.getName());	
 					send(msg);			
 				}

@@ -19,8 +19,8 @@ public class RegionGUI extends JFrame implements Runnable {
 	private CellRenderer cellRenderer;
 	private Integer side;
 	
-	public RegionGUI(List<Person> people){
-		this.setTitle("RegionGUI");
+	public RegionGUI(List<Person> people, String name){
+		this.setTitle(name);
 		this.setBounds(0, 0, 400, 400);
 		this.setVisible(true);
 		this.side = Constants.SIDE;	
@@ -51,7 +51,7 @@ public class RegionGUI extends JFrame implements Runnable {
 		int line = person.getLine();
 		int column = person.getColumn();
 
-		System.out.println("Linha: " + line + " Coluna: " + column);
+//		System.out.println("Linha: " + line + " Coluna: " + column);
 		table.setValueAt("*", line, column);
 		
 		this.table.getColumnModel().getColumn(column).setCellRenderer(cellRenderer);
@@ -63,7 +63,7 @@ public class RegionGUI extends JFrame implements Runnable {
 		int line = person.getLine();
 		int column = person.getColumn();
 		
-		System.out.println("Linha: " + line + " Coluna: " + column);
+//		System.out.println("Linha: " + line + " Coluna: " + column);
 		table.setValueAt("-", line, column);
 		
 		this.table.getColumnModel().getColumn(column).setCellRenderer(cellRenderer);

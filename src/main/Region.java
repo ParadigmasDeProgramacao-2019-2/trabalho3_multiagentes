@@ -1,6 +1,5 @@
 package main;
 
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,7 +18,7 @@ public class Region extends Agent {
 	
 	private char climate;
 	
-	public List<Person> people = new ArrayList<>();
+	public List<Person> people;
 
 	public int quantityTotalPeople = Constants.QUANTITY_TOTAL_PEOPLE;
 	public int quantityInfectedPeople = 0;
@@ -27,6 +26,9 @@ public class Region extends Agent {
 	
 	public double rateTransmissionVariable = 0;
 	public double rateTransmissionGeneral = 0;
+	
+	private int plagueTemperatureIdeal = 0;
+	private int plagueDeathPotencial = 0;
 	
 	public int temperature;
 	
@@ -38,7 +40,6 @@ public class Region extends Agent {
 		System.out.println("Setup Region");
 		System.out.println("Hello! Region-agent "+ getAID().getName() + " is ready.");
 
-		// Get the title of the book to buy as a start-up argument
 		Object[] args = getArguments();
 		if (args != null && args.length > 0) {
 			climate = (char) args[0];
@@ -55,13 +56,15 @@ public class Region extends Agent {
 				doDelete();
 			}
 			
+			people = new ArrayList<Person>();
+			
 			for (int i = 0; i < Constants.SIDE; i++) {
 				for (int j = 0; j < Constants.SIDE; j++) {
 					people.add(new Person(i, j));
 				}
 			}
 
-			regionGUI = new RegionGUI(people);
+			regionGUI = new RegionGUI(people, getAID().getName());
 			
 			rateTransmissionGeneral = 0.1 + random.nextDouble() * 0.3;
 			
@@ -83,8 +86,6 @@ public class Region extends Agent {
 			
 			addBehaviour(new DayTickerBehaviour(this, Constants.TIME_DAY_MS));
 			 
-			addBehaviour(new InfectRegionTickerBehaviour(this, Constants.TIME_DAY_MS));
-			
 		} else {
 			// Make the agent terminate
 			System.out.println("No climate specified");
@@ -132,11 +133,10 @@ public class Region extends Agent {
 		protected void onTick() {
 			
 			// TODO: stop com outra condição coerente
-			if (quantityDeadPeople == quantityTotalPeople) {
+			if (quantityDeadPeople == quantityTotalPeople) { // OU TERMINOU DE RODAR A CURA
 				System.out.println("PARANDO COMPORTAMENTO DayTickerBehaviour (todos infectados)");
 				this.myAgent.doDelete();
-				regionGUI.dispatchEvent(new WindowEvent(regionGUI, WindowEvent.WINDOW_CLOSING));
-				// stop();
+				stop();
 			} else {
 				if (climate == 'H') {
 					temperature = random.nextInt((Constants.MAX_HEAT_TEMPERATURE - Constants.MIN_HEAT_TEMPERATURE) + 1) + Constants.MIN_HEAT_TEMPERATURE;
@@ -146,11 +146,28 @@ public class Region extends Agent {
 				
 				System.out.println("TEMPERATURE " + getAID().getName() + " " + temperature);
 				
+				
+				if (plagueDeathPotencial == 0 || plagueTemperatureIdeal == 0) {
+					
+					ACLMessage msg = receive();
+					
+					if(msg != null) {	
+						String[] results = msg.getContent().split("-", 2);
+						plagueTemperatureIdeal = Integer.parseInt(results[0]);
+						plagueDeathPotencial = Integer.parseInt(results[1]);
+						System.out.println("POTENCIAL DE MORTE " + plagueDeathPotencial);
+						System.out.println("TEMPERATURA IDEAL " + plagueTemperatureIdeal);
+					 
+					} else {
+						System.out.println("Block");
+						block();
+					}
+				}
+				
 				for (Person person : people) {
 					if (person.isInfected()) {
 						person.incrementDaysInfected();
-						// TODO: pegar numero de potencial de morte da praga
-						if (person.getDaysInfected() == 20) {
+						if (person.getDaysInfected() == plagueDeathPotencial) {
 							regionGUI.showDeadPerson(person);
 							person.setDead(true);
 							quantityDeadPeople++;
@@ -158,57 +175,30 @@ public class Region extends Agent {
 					}
 				}
 				
-			}
-		}
-	}
-	
-	class InfectRegionTickerBehaviour extends TickerBehaviour {
-
-		public InfectRegionTickerBehaviour(Agent a, long period) {
-			super(a, period);
-		}
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		protected void onTick() {
-			
-			if (quantityInfectedPeople == quantityTotalPeople) {
-				System.out.println("PARANDO COMPORTAMENTO InfectTickerBehaviour (todos infectados)");
-				stop();
-			} else {
-				
 				System.out.println("A taxa de transimissao atual eh: " + rateTransmissionGeneral);
 				
-				ACLMessage msg = receive();
-				
-				if(msg != null) {	
+				if (temperature >= plagueTemperatureIdeal - Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION &&  temperature <= plagueTemperatureIdeal + Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION) {
+					infect();
 					
-					if(msg.getContent().equals(new String("Infect"))) {
-						System.out.println("Infect");
+					rateTransmissionVariable += rateTransmissionGeneral * quantityInfectedPeople;
+					System.out.println(rateTransmissionVariable);
+					
+					if(((int) rateTransmissionVariable) > quantityInfectedPeople && ((int) rateTransmissionVariable) < quantityTotalPeople) {
 						infect();
-					} else {
-						System.out.println("Erro:" + msg.getContent());
-					}					 
+					} else if(((int) rateTransmissionVariable) >= quantityTotalPeople) {
+						
+						if(rateTransmissionVariable > quantityInfectedPeople) {
+							rateTransmissionVariable = quantityTotalPeople;
+							infect();
+						}
+					}
 				} else {
-					System.out.println("Block");
-					block();
+					System.out.println("A temperatura não está ok para proliferar");
 				}
 				
-				rateTransmissionVariable += rateTransmissionGeneral * quantityInfectedPeople;
-				System.out.println(rateTransmissionVariable);
 				
-				if(((int) rateTransmissionVariable) > quantityInfectedPeople && ((int) rateTransmissionVariable) < quantityTotalPeople) {
-					infect();
-				} else if(((int) rateTransmissionVariable) >= quantityTotalPeople) {
-					
-					if(rateTransmissionVariable > quantityInfectedPeople) {
-						rateTransmissionVariable = quantityTotalPeople;
-						infect();
-					}
-				}								 
 			}
-			
 		}
 	}
+
 }
