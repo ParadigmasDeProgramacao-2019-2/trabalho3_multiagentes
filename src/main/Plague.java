@@ -16,7 +16,7 @@ public class Plague extends Agent {
 	
 	public Random random = new Random();
 	private int temperatureIdeal = random.nextInt((Constants.MAX_PLAGUE_TEMPERATURE_IDEAL - Constants.MIN_PLAGUE_TEMPERATURE_IDEAL) + 1) + Constants.MIN_PLAGUE_TEMPERATURE_IDEAL;
-	private int deathPotencial = random.nextInt((30 - 20) + 1) + 20;
+	private int deathPotential = random.nextInt((Constants.MAX_PLAGUE_DEATH_POTENTIAL - Constants.MIN_PLAGUE_DEATH_POTENTIAL) + 1) + Constants.MIN_PLAGUE_DEATH_POTENTIAL;
 	
 	public void setup() {
 		System.out.println("Setup Plague");
@@ -72,7 +72,7 @@ public class Plague extends Agent {
 				for (DFAgentDescription res : result) {						
 					ACLMessage msg = new ACLMessage(ACLMessage.INFORM);		
 					
-					msg.setContent(String.valueOf(temperatureIdeal) + "-" + String.valueOf(deathPotencial));
+					msg.setContent(String.valueOf(temperatureIdeal) + "-" + String.valueOf(deathPotential));
 					msg.addReceiver(res.getName());	
 					send(msg);			
 				}

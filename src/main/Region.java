@@ -18,22 +18,24 @@ public class Region extends Agent {
 	
 	private char climate;
 	
-	public List<Person> people;
+	private List<Person> people;
 
-	public int quantityTotalPeople = Constants.QUANTITY_TOTAL_PEOPLE;
-	public int quantityInfectedPeople = 0;
-	public int quantityDeadPeople = 0;
+	private int quantityTotalPeople = Constants.QUANTITY_TOTAL_PEOPLE;
+	private int quantityInfectedPeople = 0;
+	private int quantityDeadPeople = 0;
 	
-	public double rateTransmissionVariable = 0;
-	public double rateTransmissionGeneral = 0;
+	private double rateTransmissionVariable = 0;
+	private double rateTransmissionGeneral = 0;
 	
 	private int plagueTemperatureIdeal = 0;
-	private int plagueDeathPotencial = 0;
+	private int plagueDeathPotential = 0;
 	
-	public int temperature;
+	private int temperature;
+		
+	private RegionGUI regionGUI;
+	private Random random = new Random();
 	
-	public RegionGUI regionGUI;
-	public Random random = new Random();
+	private int daysToFindCure;
 	
 	public void setup() {	
 		
@@ -55,6 +57,8 @@ public class Region extends Agent {
 				System.out.println("No corrected climate specified");
 				doDelete();
 			}
+			
+			daysToFindCure = random.nextInt((Constants.MAX_DAYS_TO_FIND_CURE - Constants.MIN_DAYS_TO_FIND_CURE) + 1) + Constants.MIN_DAYS_TO_FIND_CURE;
 			
 			people = new ArrayList<Person>();
 			
@@ -138,6 +142,15 @@ public class Region extends Agent {
 				this.myAgent.doDelete();
 				stop();
 			} else {
+				
+				if (getTickCount() >= daysToFindCure) {
+					// TODO: Implementar a cura
+					// CURA -> diminuiria a proliferação da praga
+					//		-> diminuir em todos as regions
+					//		-> o region que encontrar a cura primeiro tem que dar um jeito de notificar as outras regions
+					//		-> de dia em dia ou em menos, curando tantas pessoas, não vai curar todos instantaneamente, podendo ocasionar mortes no meio deste processo
+				}
+				
 				if (climate == 'H') {
 					temperature = random.nextInt((Constants.MAX_HEAT_TEMPERATURE - Constants.MIN_HEAT_TEMPERATURE) + 1) + Constants.MIN_HEAT_TEMPERATURE;
 				} else if (climate == 'C') {
@@ -147,15 +160,15 @@ public class Region extends Agent {
 				System.out.println("TEMPERATURE " + getAID().getName() + " " + temperature);
 				
 				
-				if (plagueDeathPotencial == 0 || plagueTemperatureIdeal == 0) {
+				if (plagueDeathPotential == 0 || plagueTemperatureIdeal == 0) {
 					
 					ACLMessage msg = receive();
 					
 					if(msg != null) {	
 						String[] results = msg.getContent().split("-", 2);
 						plagueTemperatureIdeal = Integer.parseInt(results[0]);
-						plagueDeathPotencial = Integer.parseInt(results[1]);
-						System.out.println("POTENCIAL DE MORTE " + plagueDeathPotencial);
+						plagueDeathPotential = Integer.parseInt(results[1]);
+						System.out.println("POTENCIAL DE MORTE " + plagueDeathPotential);
 						System.out.println("TEMPERATURA IDEAL " + plagueTemperatureIdeal);
 					 
 					} else {
@@ -167,7 +180,7 @@ public class Region extends Agent {
 				for (Person person : people) {
 					if (person.isInfected()) {
 						person.incrementDaysInfected();
-						if (person.getDaysInfected() == plagueDeathPotencial) {
+						if (person.getDaysInfected() == plagueDeathPotential) {
 							regionGUI.showDeadPerson(person);
 							person.setDead(true);
 							quantityDeadPeople++;
