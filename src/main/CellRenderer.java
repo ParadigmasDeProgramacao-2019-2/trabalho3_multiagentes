@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class CellRenderer extends DefaultTableCellRenderer {
 	
 	private static final long serialVersionUID = 1L;
+	
 
 	@Override
 	  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -16,6 +17,9 @@ public class CellRenderer extends DefaultTableCellRenderer {
 	    if (table.getModel().getValueAt(row, column) != null && table.getModel().getValueAt(row, column).equals(new String("*"))) {
 	      component.setBackground(Color.RED);
 	      component.setForeground(Color.RED);
+	    } else if (table.getModel().getValueAt(row, column) != null && table.getModel().getValueAt(row, column).equals(new String("-"))) {
+		      component.setBackground(Color.BLACK);
+		      component.setForeground(Color.BLACK);
 	    } else {
 	      component.setBackground(Color.WHITE);
 	    }

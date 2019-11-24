@@ -1,14 +1,16 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import jade.core.Agent;
+import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
-import jade.core.behaviours.*;
 
 public class Region extends Agent {
 
@@ -16,10 +18,11 @@ public class Region extends Agent {
 	
 	private char climate;
 	
-	public int side = 20;
-	
-	public int quantityTotalPeople = side * side;
+	public List<Person> people = new ArrayList<>();
+
+	public int quantityTotalPeople = Constants.QUANTITY_TOTAL_PEOPLE;
 	public int quantityInfectedPeople = 0;
+	public int quantityDeadPeople = 0;
 	
 	public double rateTransmissionVariable = 0;
 	public double rateTransmissionGeneral = 0;
@@ -50,8 +53,14 @@ public class Region extends Agent {
 				System.out.println("No corrected climate specified");
 				doDelete();
 			}
+			
+			for (int i = 0; i < Constants.SIDE; i++) {
+				for (int j = 0; j < Constants.SIDE; j++) {
+					people.add(new Person(i, j));
+				}
+			}
 
-			regionGUI = new RegionGUI(quantityTotalPeople);
+			regionGUI = new RegionGUI(people);
 			
 			rateTransmissionGeneral = 0.1 + random.nextDouble() * 0.3;
 			
@@ -71,7 +80,7 @@ public class Region extends Agent {
 			  fe.printStackTrace();
 			}
 			
-			addBehaviour(new TemperatureTickerBehaviour(this, Constants.TIME_DAY_MS));
+			addBehaviour(new DayTickerBehaviour(this, Constants.TIME_DAY_MS));
 			 
 			addBehaviour(new InfectRegionTickerBehaviour(this, Constants.TIME_DAY_MS));
 			
@@ -88,16 +97,22 @@ public class Region extends Agent {
 	
 		while(quantityInfectedPeople < rateTransmissionVariable || quantityInfectedPeople == 0) {
 			
-			this.quantityInfectedPeople++;		
-			this.regionGUI.mostrarPessoaInfectada();
+			Person personToInfect = people.get( random.nextInt(people.size()) );
+			while (personToInfect.isInfected() || personToInfect.isDead()) {
+				personToInfect = people.get( random.nextInt(people.size()) );
+			}
+			
+			this.regionGUI.showInfectedPerson(personToInfect);
+			this.quantityInfectedPeople++;
+			personToInfect.setInfected(true);
 		}
 		
 		System.out.println(String.valueOf("Qtd: " + this.quantityInfectedPeople));		
 	}
 	
-	class TemperatureTickerBehaviour extends TickerBehaviour {
+	class DayTickerBehaviour extends TickerBehaviour {
 
-		public TemperatureTickerBehaviour(Agent a, long period) {
+		public DayTickerBehaviour(Agent a, long period) {
 			super(a, period);
 		}
 
@@ -106,8 +121,9 @@ public class Region extends Agent {
 		@Override
 		protected void onTick() {
 			
-			if (quantityInfectedPeople == quantityTotalPeople) {
-				System.out.println("PARANDO COMPORTAMENTO TemperatureTickerBehaviour (todos infectados)");
+			// TODO: stop com outra condição coerente
+			if (quantityDeadPeople == quantityTotalPeople) {
+				System.out.println("PARANDO COMPORTAMENTO DayTickerBehaviour (todos infectados)");
 				stop();
 			} else {
 				if (climate == 'H') {
@@ -117,6 +133,19 @@ public class Region extends Agent {
 				}
 				
 				System.out.println("TEMPERATURE " + getAID().getName() + " " + temperature);
+				
+				for (Person person : people) {
+					if (person.isInfected()) {
+						person.incrementDaysInfected();
+						// TODO: pegar numero de potencial de morte da praga
+						if (person.getDaysInfected() == 20) {
+							regionGUI.showDeadPerson(person);
+							person.setDead(true);
+							quantityDeadPeople++;
+						}
+					}
+				}
+				
 			}
 		}
 	}
@@ -136,13 +165,6 @@ public class Region extends Agent {
 				System.out.println("PARANDO COMPORTAMENTO InfectTickerBehaviour (todos infectados)");
 				stop();
 			} else {
-//				if (climate == 'H') {
-//					temperature = random.nextInt((Constants.MAX_HEAT_TEMPERATURE - Constants.MIN_HEAT_TEMPERATURE) + 1) + Constants.MIN_HEAT_TEMPERATURE;
-//				} else if (climate == 'C') {
-//					temperature = random.nextInt((Constants.MAX_COLD_TEMPERATURE - Constants.MIN_COLD_TEMPERATURE) + 1) + Constants.MIN_COLD_TEMPERATURE;
-//				}
-				
-//				System.out.println("TEMPERATURE " + getAID().getName() + " " + temperature);
 				
 				System.out.println("A taxa de transimissao atual eh: " + rateTransmissionGeneral);
 				
@@ -173,7 +195,7 @@ public class Region extends Agent {
 						infectar();
 					}
 					// TODO: verificar (o agente não irá ser suspenso, ele tem que continuar ativo para curas e mortes)
-					myAgent.doSuspend();
+					// myAgent.doSuspend();
 				}								 
 			}
 			

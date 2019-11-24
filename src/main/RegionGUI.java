@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -22,12 +22,12 @@ public class RegionGUI extends JFrame {
 	private Integer rateScreenUpdate = 0;
 	private ArrayList<Point> positions;
 	
-	public RegionGUI(Integer quantityPeople){
+	public RegionGUI(List<Person> people){
 		this.setTitle("RegionGUI");
 		this.setBounds(0, 0, 400, 400);
 		this.setResizable(false);
 		this.setVisible(true);
-		this.side = (int)(Math.sqrt(quantityPeople));		
+		this.side = Constants.SIDE; // (int)(Math.sqrt(people.size()));		
 		this.positions = new ArrayList<>();
 		
 		this.table = new JTable(side, side){
@@ -52,16 +52,17 @@ public class RegionGUI extends JFrame {
 		this.getContentPane().add( new JScrollPane( table ), BorderLayout.CENTER );
 	}
 
-	public void mostrarPessoaInfectada() {		
-		Random random = new Random();
-		int line = random.nextInt(this.side);
-		int column = random.nextInt(this.side);
+	public void showInfectedPerson(Person person) {		
+//		Random random = new Random();
+		
+		int line = person.getLine(); // random.nextInt(this.side);
+		int column = person.getColumn(); // random.nextInt(this.side);
 
-		while(positions.contains(new Point(line, column))) {
-			System.out.println("Ponto já criado");
-			line = random.nextInt(this.side);
-			column = random.nextInt(this.side);
-		}
+//		while(positions.contains(new Point(line, column))) {
+//			System.out.println("Ponto já criado");
+//			line = random.nextInt(this.side);
+//			column = random.nextInt(this.side);
+//		}
 		
 		System.out.println("Linha: " + line + " Coluna: " + column);
 		this.positions.add(new Point(line, column));		
@@ -70,11 +71,27 @@ public class RegionGUI extends JFrame {
 		CellRenderer mcr = new CellRenderer();
 		this.table.getColumnModel().getColumn(column).setCellRenderer(mcr);
 		
-		atualizarTela();
+		updateScreen();
+		
+	}
+	
+	public void showDeadPerson(Person person) {		
+		
+		int line = person.getLine(); // random.nextInt(this.side);
+		int column = person.getColumn(); // random.nextInt(this.side);
+		
+		System.out.println("Linha: " + line + " Coluna: " + column);
+		this.positions.add(new Point(line, column));		
+		table.setValueAt("-", line, column);
+		
+		CellRenderer mcr = new CellRenderer();
+		this.table.getColumnModel().getColumn(column).setCellRenderer(mcr);
+		
+		updateScreen();
 		
 	}
 
-	private void atualizarTela() {
+	private void updateScreen() {
 		this.table.repaint();
 		this.repaint();
 		

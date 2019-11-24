@@ -13,4 +13,7 @@ public class Constants {
 	public final static int MIN_PLAGUE_TEMPERATURE_IDEAL = 20;
 	public final static int MAX_PLAGUE_TEMPERATURE_IDEAL = 30;
 	
+	public final static int SIDE = 20;
+	public final static int QUANTITY_TOTAL_PEOPLE = SIDE * SIDE;
+	
 }
