@@ -1,7 +1,7 @@
 x // CRIAR UMA VARIAVEL TEMPO DO DIA -> pode ser 2 segundos cada dia
 x // CADA AMBIENTE SERÁ DE LADO 20 -> 20X20 -> 400 PESSOAS
 
-// VERIFICAR ATUALIZAÇÃO DA TELA (aumentando a altura e não atualizando as vezes)
+x // VERIFICAR ATUALIZAÇÃO DA TELA (aumentando a altura e não atualizando as vezes)
 
 x // PROLIFERAÇÃO
 x // if AMBIENTE = CALOR -> random 20 - 45
@@ -12,13 +12,8 @@ x // TEMPERATURA IDEAL RANDOM 20 A 30 (COM A VARIACAO SE FOR 20 [15..25] E SE FO
 
 x // TEMPERATURA DO REGION IRÁ SE ALTERAR DE DIA EM DIA
 
-// TODO : REGION MANDAR A MENSAGEM COM A TEMPERATURA, 
- 		 PLAGUE VERIFICAR SE ESTA DENTRO DO "IDEAL" E MANDAR A MENSAGEM DE INFECT
-
 x // TODO: DEFINIR TEMPO DE PROLIFERAÇÃO -> sugestão 1/4 de dia
-// TODO: DEFINIR QUANTAS PESSOAS POR UNIDADE DE TEMPO IRIA SER INFECTADA (já existe um calculo que não entendemos nada)
-// SE O AMBIENTE NO DIA ESTIVER COM A TEMPERATURA IDEAL
-// CASO NÃO QUISER USAR O CALCULO DIMINUIR O TEMPO DE PROLIFERAÇÃO E A CADA TEMPO INFECTAR UMA PESSOA SÓ RANDOMICAMENTE DO AMBIENTE EM QUE HÁ A TEMPERATURA IDEAL
+x // TODO: DEFINIR QUANTAS PESSOAS POR UNIDADE DE TEMPO IRIA SER INFECTADA
 
 x // PESSOA
 x // boolean infectado
@@ -30,6 +25,12 @@ x // Map -> pos da pessoa [linha, coluna] -> int qtdDiasInfectado
 x // MORTE
 x // inicialmente se determinada pessoa estiver com a praga a TANTAS unidades de tempo (ticks)
 x // poderia ter um atributo potencial de morte na praga para indicar quanto de unidade de tempo ela precisa para matar
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// TODO : REGION MANDAR A MENSAGEM COM A TEMPERATURA, 
+ 		 PLAGUE VERIFICAR SE ESTA DENTRO DO "IDEAL" E MANDAR A MENSAGEM DE INFECT
+// SE O AMBIENTE NO DIA ESTIVER COM A TEMPERATURA IDEAL
+// CASO NÃO QUISER USAR O CALCULO DIMINUIR O TEMPO DE PROLIFERAÇÃO E A CADA TEMPO INFECTAR UMA PESSOA SÓ RANDOMICAMENTE DO AMBIENTE EM QUE HÁ A TEMPERATURA IDEAL
 
 // TODO: DEFINIR QUANTIDADE DE DIAS PARA MORRER COM A PRAGA -> setar um atributo pontecialDeMorte na PRAGA
 // TODO: capturar potencial de dias na region
@@ -43,8 +44,10 @@ x // poderia ter um atributo potencial de morte na praga para indicar quanto de 
 // CASO NÃO QUISER USAR O CALCULO DIMINUIR O TEMPO DE CURA E A CADA TEMPO CURAR UMA PESSOA SÓ RANDOMICAMENTE DO AMBIENTE QUE ESTEJA INFECTADA
 
 // EXECUCAO
-// se todos morrerem = parar o programa
+// se todos morrerem = parar o programa (a regiao que morreu todos)
 // se a cura for encontrada = mudar a cor dos vermelhos para azul e parar o programa -> começar a cura
 
 // AO FINAL IMPRIMIR UM RELATORIO PARA CADA REGION
 // RELATORIO -> QTD DIAS, QTD TOTAL PESSOAS, QTD CURADOS, QTD MORTOS
+
+// TODO: SE DER TEMPO MEXER COM PROLIFERAÇÃO POR PROXIMIDADE

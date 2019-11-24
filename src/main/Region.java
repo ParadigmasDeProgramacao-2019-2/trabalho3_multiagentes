@@ -103,9 +103,7 @@ public class Region extends Agent {
 		
 	}
 	
-	private void infectar() {
-//		if(quantityInfectedPeople == 0)
-//			regionGUI = new RegionGUI(quantityTotalPeople);
+	private void infect() {
 	
 		while(quantityInfectedPeople < rateTransmissionVariable || quantityInfectedPeople == 0) {
 			
@@ -188,7 +186,7 @@ public class Region extends Agent {
 					
 					if(msg.getContent().equals(new String("Infect"))) {
 						System.out.println("Infect");
-						infectar();
+						infect();
 					} else {
 						System.out.println("Erro:" + msg.getContent());
 					}					 
@@ -201,15 +199,13 @@ public class Region extends Agent {
 				System.out.println(rateTransmissionVariable);
 				
 				if(((int) rateTransmissionVariable) > quantityInfectedPeople && ((int) rateTransmissionVariable) < quantityTotalPeople) {
-					infectar();
+					infect();
 				} else if(((int) rateTransmissionVariable) >= quantityTotalPeople) {
 					
 					if(rateTransmissionVariable > quantityInfectedPeople) {
 						rateTransmissionVariable = quantityTotalPeople;
-						infectar();
+						infect();
 					}
-					// TODO: verificar (o agente não irá ser suspenso, ele tem que continuar ativo para curas e mortes)
-					// myAgent.doSuspend();
 				}								 
 			}
 			

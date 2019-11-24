@@ -2,39 +2,32 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Point;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-public class RegionGUI extends JFrame {
+public class RegionGUI extends JFrame implements Runnable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private JTable table;
 	
+	private CellRenderer cellRenderer;
 	private Integer side;
-	private Integer rateScreenUpdate = 0;
-	private ArrayList<Point> positions;
 	
 	public RegionGUI(List<Person> people){
 		this.setTitle("RegionGUI");
 		this.setBounds(0, 0, 400, 400);
-		this.setResizable(false);
 		this.setVisible(true);
-		this.side = Constants.SIDE; // (int)(Math.sqrt(people.size()));		
-		this.positions = new ArrayList<>();
+		this.side = Constants.SIDE;	
+		this.cellRenderer = new CellRenderer();
 		
 		this.table = new JTable(side, side){
-			/**
-			 * 
-			 */
+			
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -54,59 +47,32 @@ public class RegionGUI extends JFrame {
 	}
 
 	public void showInfectedPerson(Person person) {		
-//		Random random = new Random();
 		
-		int line = person.getLine(); // random.nextInt(this.side);
-		int column = person.getColumn(); // random.nextInt(this.side);
+		int line = person.getLine();
+		int column = person.getColumn();
 
-//		while(positions.contains(new Point(line, column))) {
-//			System.out.println("Ponto j√° criado");
-//			line = random.nextInt(this.side);
-//			column = random.nextInt(this.side);
-//		}
-		
 		System.out.println("Linha: " + line + " Coluna: " + column);
-		this.positions.add(new Point(line, column));		
 		table.setValueAt("*", line, column);
 		
-		CellRenderer mcr = new CellRenderer();
-		this.table.getColumnModel().getColumn(column).setCellRenderer(mcr);
-		
-		updateScreen();
+		this.table.getColumnModel().getColumn(column).setCellRenderer(cellRenderer);
 		
 	}
 	
 	public void showDeadPerson(Person person) {		
 		
-		int line = person.getLine(); // random.nextInt(this.side);
-		int column = person.getColumn(); // random.nextInt(this.side);
+		int line = person.getLine();
+		int column = person.getColumn();
 		
 		System.out.println("Linha: " + line + " Coluna: " + column);
-		this.positions.add(new Point(line, column));		
 		table.setValueAt("-", line, column);
 		
-		CellRenderer mcr = new CellRenderer();
-		this.table.getColumnModel().getColumn(column).setCellRenderer(mcr);
-		
-		updateScreen();
+		this.table.getColumnModel().getColumn(column).setCellRenderer(cellRenderer);
 		
 	}
 
-	private void updateScreen() {
-		SwingUtilities.invokeLater(new Runnable() {//est· funcionando
-	         public void run() {
-	          repaint(); //repaint pro Frame
-	         }
-		});
-		/*
-		this.repaint();
-		this.table.repaint();
-		if(rateScreenUpdate == 0) {
-			this.setSize(this.getWidth() + 1, this.getHeight() + 1);
-			rateScreenUpdate = 1;
-		} else {
-			this.setSize(this.getWidth() - 1, this.getHeight() - 1);
-			rateScreenUpdate = 0;
-		}*/
+	@Override
+	public void run() {
+        this.repaint();
 	}
+		
 }
