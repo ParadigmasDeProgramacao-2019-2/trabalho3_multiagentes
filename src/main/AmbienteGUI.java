@@ -1,18 +1,14 @@
 package main;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -20,7 +16,6 @@ public class AmbienteGUI extends JFrame{
 	
 	private static final long serialVersionUID = 1L;
 	
-	private JPanel panel;
 	private JTable table;
 	
 	private Integer lado;
@@ -34,13 +29,18 @@ public class AmbienteGUI extends JFrame{
 		this.posicoes = new ArrayList<>();
 		
 		this.table = new JTable(lado, lado){
-		   @Override
-	       public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-	           Component component = super.prepareRenderer(renderer, row, column);
-	           int rendererWidth = component.getPreferredSize().width;
-	           TableColumn tableColumn = getColumnModel().getColumn(column);
-	           tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
-	           return component;
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+				Component component = super.prepareRenderer(renderer, row, column);
+				int rendererWidth = component.getPreferredSize().width;
+				TableColumn tableColumn = getColumnModel().getColumn(column);
+				tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+				return component;
 	        }
 	    };		    
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -67,11 +67,6 @@ public class AmbienteGUI extends JFrame{
 		
 		CellRenderer mcr = new CellRenderer();
 		this.table.getColumnModel().getColumn(coluna).setCellRenderer(mcr);
-		
-		
-		
-//		table.getCellRenderer(linha, coluna).getTableCellRendererComponent(this.table, new Object(), false, false, linha, coluna);
-//		ImageIcon img = new ImageIcon("assets/infectada.jpg");
 		
 		atualizarTela();
 		

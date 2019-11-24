@@ -1,0 +1,41 @@
+// CRIAR UMA VARIAVEL TEMPO DO DIA -> pode ser 2 segundos cada dia
+// CADA AMBIENTE SERÁ DE LADO 20 -> 20X20 -> 400 PESSOAS
+
+// PROLIFERAÇÃO
+// if AMBIENTE = CALOR -> random 20 - 50
+// if AMBIENTE = FRIO -> random 0 - 30
+// PRAGA TEM UMA TEMPERATURA IDEAL PARA PROLIFERAÇÃO
+// ESSA TEMPERATURA IDEAL SERIA DO VALOR SETADO COM VARIAÇÃO DE 5 PRA CIMA OU PARA BAIXO
+// TEMPERATURA IDEAL RANDOM 20 A 30 (COM A VARIACAO SE FOR 20 [15..25] E SE FOR 30 [25..35])
+
+// TEMPERATURA IRÁ SE ALTERAR DE DIA EM DIA
+
+// SE O AMBIENTE NO DIA ESTIVER COM A TEMPERATURA IDEAL
+// TODO: DEFINIR TEMPO DE PROLIFERAÇÃO -> sugestão 1/4 de dia
+// TODO: DEFINIR QUANTAS PESSOAS POR UNIDADE DE TEMPO IRIA SER INFECTADA (já existe um calculo que não entendemos nada)
+// CASO NÃO QUISER USAR O CALCULO DIMINUIR O TEMPO DE PROLIFERAÇÃO E A CADA TEMPO INFECTAR UMA PESSOA SÓ RANDOMICAMENTE DO AMBIENTE EM QUE HÁ A TEMPERATURA IDEAL
+
+// PESSOA
+// boolean infectado
+// int qtdDiasInfectado
+// pos na matriz
+// OU
+// Map -> pos da pessoa [linha, coluna] -> int qtdDiasInfectado (mais facil)
+
+// MORTE
+// inicialmente se determinada pessoa estiver com a praga a TANTAS unidades de tempo (ticks)
+// poderia ter um atributo potencial de morte na praga para indicar quanto de unidade de tempo ela precisa para matar
+
+// TODO: DEFINIR QUANTIDADE DE DIAS PARA MORRER COM A PRAGA -> setar um atributo pontecialDeMorte na PRAGA
+
+// CURA
+// a praga teria um atributo boolean contigenciamento para indicar se foi encontrada a cura ou não para parar de infectar os ambientes
+// inicialmente poderia ser por tantas unidades de tempo para ser encontrada a cura
+
+// TODO: DEFINIR TEMPO DE CURA -> 30 dias talvez
+// TODO: DEFINIR QUANTAS PESSOAS SERÃO CURADAS POR DIA -> definir um calculo ou setar um tanto legal
+// CASO NÃO QUISER USAR O CALCULO DIMINUIR O TEMPO DE CURA E A CADA TEMPO CURAR UMA PESSOA SÓ RANDOMICAMENTE DO AMBIENTE QUE ESTEJA INFECTADA
+
+// EXECUCAO
+// se todos morrerem = parar o programa
+// se a cura for encontrada = mudar a cor dos vermelhos para azul e parar o programa -> começar a cura

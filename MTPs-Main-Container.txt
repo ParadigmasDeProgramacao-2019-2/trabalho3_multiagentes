@@ -1,1 +1,1 @@
-http://jobs:7778/acc
+http://avell-g1513mx:7778/acc

@@ -91,6 +91,7 @@ public class Ambiente extends Agent {
 			ambienteGUI = new AmbienteGUI(qtd_pessoas_total);
 	
 		while(qtd_pessoas_infectadas < taxa_transmissao_variante || qtd_pessoas_infectadas == 0) {
+			
 			this.qtd_pessoas_infectadas++;		
 			this.ambienteGUI.mostrarPessoaInfectada();
 		}
