@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -91,6 +92,17 @@ public class Region extends Agent {
 		}
 	}
 	
+	protected void takeDown() {
+		
+		try {
+			System.out.println("Region "+ this.getLocalName() +" was total infected");
+			DFService.deregister(this);
+		}catch (FIPAException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
 	private void infectar() {
 //		if(quantityInfectedPeople == 0)
 //			regionGUI = new RegionGUI(quantityTotalPeople);
@@ -124,7 +136,9 @@ public class Region extends Agent {
 			// TODO: stop com outra condição coerente
 			if (quantityDeadPeople == quantityTotalPeople) {
 				System.out.println("PARANDO COMPORTAMENTO DayTickerBehaviour (todos infectados)");
-				stop();
+				this.myAgent.doDelete();
+				regionGUI.dispatchEvent(new WindowEvent(regionGUI, WindowEvent.WINDOW_CLOSING));
+				// stop();
 			} else {
 				if (climate == 'H') {
 					temperature = random.nextInt((Constants.MAX_HEAT_TEMPERATURE - Constants.MIN_HEAT_TEMPERATURE) + 1) + Constants.MIN_HEAT_TEMPERATURE;
