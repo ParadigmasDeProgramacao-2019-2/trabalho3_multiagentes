@@ -11,7 +11,7 @@
 
 ## Instalação
 
-Para poder executar o programa acima é necessário ter a plataforma Jade devidamente configurada em sua maquina, além do Java SDK com a versão > 1.7.
+Para poder executar o programa acima é necessário ter o JAVA e a plataforma Jade devidamente configurada em sua maquina.
 
 Para obter o projeto basta cloná-lo utilizando o comando abaixo (necessário instalação do GIT).
 
@@ -19,8 +19,8 @@ Para obter o projeto basta cloná-lo utilizando o comando abaixo (necessário in
 
 ## Execução
 
-Para executar o programa, basta rodar a main() que está presente no arquivo "src/Main.java" como una aplicação em Java.
+Para executar o programa, basta rodar a main() que está presente no arquivo "src/Main.java" como una aplicação em Java. Ou executar a interface do JADE e criar os agentes.
 
 ## Resumo
 
-_The Plague_ é um sistema desenvolvido em PROLOG onde através de uma primeira comtaminação de um ambiente se faz possível visualizar o desevolvimento da mesma considerrando fatores como temperatura do local e temperadura ideal de proliferação da praga.
+_The Plague_ é um sistema desenvolvido em JADE onde através de uma primeira contaminação de uma região se faz possível visualizar o desevolvimento da mesma considerando fatores como temperatura atual da região e temperadura ideal de proliferação da praga.
