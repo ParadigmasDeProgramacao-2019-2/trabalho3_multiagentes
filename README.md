@@ -1,0 +1,26 @@
+# The Plague
+
+## Autores
+
+| Nome  | Matrícula UnB  | GitHub | Email |
+|---|---|---|---|
+| Daniel Maike Mendes Gonçalves  | 16/0117003  | [DanMke](https://github.com/DanMke) | danmke@hotmail.com |
+| Gabriela Medeiros da Silva	  | 16/0121817 | [gabiMSilva](https://github.com/gabiMSilva) | gabriela.medeiros2010@hotmail.com.br |
+| Joberth Rogers Tavares Costa	  | 16/0128013	  | [joberthrogers18](https://github.com/joberthrogers18) | joberth.rogers18@gmail.com |
+| Renan Welz Schadt | 16/0143403  | [renan601](https://github.com/renan601) | welzrenan@gmail.com |
+
+## Instalação
+
+Para poder executar o programa acima é necessário ter a plataforma Jade devidamente configurada em sua maquina, além do Java SDK com a versão > 1.7.
+
+Para obter o projeto basta cloná-lo utilizando o comando abaixo (necessário instalação do GIT).
+
+> *``` git clone https://github.com/ParadigmasDeProgramacao-2019-2/trabalho3_multiagentes ```*
+
+## Execução
+
+Para executar o programa, basta rodar a main() que está presente no arquivo "src/Main.java" como una aplicação em Java.
+
+## Resumo
+
+_The Plague_ é um sistema desenvolvido em PROLOG onde através de uma primeira comtaminação de um ambiente se faz possível visualizar o desevolvimento da mesma considerrando fatores como temperatura do local e temperadura ideal de proliferação da praga.
