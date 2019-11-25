@@ -1,0 +1,8 @@
+**********REPORT**********
+Quantity of days: 133
+Quantity of people: 400
+Quantity of infected people: 400
+Quantity of healed people: 214
+Quantity of dead people: 186
+Quantity of days to find cure: 65
+Daily cure capacity: 3

@@ -20,8 +20,8 @@ public class Plague extends Agent {
 	
 	public void setup() {
 		System.out.println("Setup Plague");
-		System.out.println("Hello! Region-agent "+ getAID().getName() + " is ready.");
-		System.out.println(getAID().getName() + " ideal temperature " + temperatureIdeal);
+		System.out.println("Hello! Plague-Agent "+ getAID().getName() + " is ready.");
+		System.out.println(getAID().getName() + " ideal temperature " + temperatureIdeal + " death potential " + deathPotential);
 		
 		// Register the service in the yellow pages
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -39,20 +39,20 @@ public class Plague extends Agent {
 		  fe.printStackTrace();
 		}
 		
-		addBehaviour(new InfectTickerBehaviour(this, Constants.TIME_PROLIFERATION_MS));
+		addBehaviour(new InfectCyclicBehaviour(this));
 
 	}
 	
-	class InfectTickerBehaviour extends TickerBehaviour {
+	class InfectCyclicBehaviour extends CyclicBehaviour {
 
 		private static final long serialVersionUID = 1L;
 
-		public InfectTickerBehaviour(Agent a, long period) {
-			super(a, period);
+		public InfectCyclicBehaviour(Agent a) {
+			super(a);
 		}
 		
 		@Override
-		public void onTick() {
+		public void action() {
 			
 			DFAgentDescription dfd = new DFAgentDescription();
 			ServiceDescription sd = new ServiceDescription();
@@ -76,6 +76,8 @@ public class Plague extends Agent {
 					msg.addReceiver(res.getName());	
 					send(msg);			
 				}
+			} else {
+				block();
 			}
 			
 		}

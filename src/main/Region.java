@@ -1,5 +1,9 @@
 package main;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,15 +51,14 @@ public class Region extends Agent {
 
 		Object[] args = getArguments();
 		if (args != null && args.length > 0) {
-			climate = (char) args[0];
-			System.out.println("Climate is "+ climate);
+			climate = args[0].toString().charAt(0);
 			
 			if (climate == 'H') {
 				temperature = random.nextInt((Constants.MAX_HEAT_TEMPERATURE - Constants.MIN_HEAT_TEMPERATURE) + 1) + Constants.MIN_HEAT_TEMPERATURE;
 				System.out.println("TEMPERATURE " + temperature);
 			} else if (climate == 'C') {
 				temperature = random.nextInt((Constants.MAX_COLD_TEMPERATURE - Constants.MIN_COLD_TEMPERATURE) + 1) + Constants.MIN_COLD_TEMPERATURE;
-				System.out.println("TEMPERATURA " + temperature);
+				System.out.println("TEMPERATURE " + temperature);
 			} else {
 				System.out.println("No corrected climate specified");
 				doDelete();
@@ -104,29 +107,11 @@ public class Region extends Agent {
 	protected void takeDown() {
 		
 		try {
-			System.out.println("Region "+ this.getLocalName() +" was total infected");
 			DFService.deregister(this);
-		}catch (FIPAException e) {
+		} catch (FIPAException e) {
 			e.printStackTrace();
 		}
 		
-	}
-	
-	private void infect() {
-	
-		while(quantityInfectedPeople < rateTransmissionVariable || quantityInfectedPeople == 0) {
-			
-			Person personToInfect = people.get( random.nextInt(people.size()) );
-			while (personToInfect.isInfected() || personToInfect.isDead()) {
-				personToInfect = people.get( random.nextInt(people.size()) );
-			}
-			
-			this.regionGUI.showInfectedPerson(personToInfect);
-			this.quantityInfectedPeople++;
-			personToInfect.setInfected(true);
-		}
-		
-		System.out.println(String.valueOf("Qtd: " + this.quantityInfectedPeople));		
 	}
 	
 	class DayTickerBehaviour extends TickerBehaviour {
@@ -140,92 +125,141 @@ public class Region extends Agent {
 		@Override
 		protected void onTick() {
 			
-			// TODO: stop com outra condição coerente
 			if (quantityDeadPeople + quantityHealedPeople == quantityTotalPeople) {
-				System.out.println("PARANDO COMPORTAMENTO DayTickerBehaviour (todos infectados)");
+				System.out.println("PARANDO COMPORTAMENTO DayTickerBehaviour " + myAgent.getName());
+
+				System.out.println("\n\n**********REPORT**********");
+				System.out.println("Quantity of days: " + getTickCount());
+				System.out.println("Quantity of people: " + quantityTotalPeople);
+				System.out.println("Quantity of infected people: " + quantityInfectedPeople);
+				System.out.println("Quantity of healed people: " + quantityHealedPeople);
+				System.out.println("Quantity of dead people: " + quantityDeadPeople);
+				System.out.println("Quantity of days to find cure: " + daysToFindCure);
+				System.out.println("Daily cure capacity: " + healedPersonsADay + "\n\n");
+				
+				OutputStream os = null;
+				try {
+					os = new FileOutputStream(new File(myAgent.getName() + ".txt"));
+					
+					StringBuilder stringBuilder = new StringBuilder();
+					stringBuilder.append("**********REPORT**********\n");
+					stringBuilder.append("Quantity of days: " + getTickCount() + "\n");
+					stringBuilder.append("Quantity of people: " + quantityTotalPeople + "\n");
+					stringBuilder.append("Quantity of infected people: " + quantityInfectedPeople + "\n");
+					stringBuilder.append("Quantity of healed people: " + quantityHealedPeople + "\n");
+					stringBuilder.append("Quantity of dead people: " + quantityDeadPeople + "\n");
+					stringBuilder.append("Quantity of days to find cure: " + daysToFindCure + "\n");
+					stringBuilder.append("Daily cure capacity: " + healedPersonsADay + "\n");
+						
+					os.write(stringBuilder.toString().getBytes());
+				
+					os.close();
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				} 
+				
 				this.myAgent.doDelete();
 				stop();
 			} else {
-					// TODO: Implementar a cura
-					// CURA -> diminuiria a proliferação da praga
-					//		-> diminuir em todos as regions
-					//		-> o region que encontrar a cura primeiro tem que dar um jeito de notificar as outras regions
-					//		-> de dia em dia ou em menos, curando tantas pessoas, não vai curar todos instantaneamente, podendo ocasionar mortes no meio deste processo
 					if (getTickCount() >= daysToFindCure) {
-						Collections.shuffle(people);
-						int flag = 0;
-						for (Person p : people) {
-							if (p.isInfected() == true && p.isDead() == false && p.isHealed() == false && flag <= healedPersonsADay) {
-								p.setHealed(true);
-								regionGUI.showHealedPerson(p);
-								flag += 1;
-								quantityHealedPeople++;
-							}
-						}
+						cure();
 					}
 					
-					System.out.println("Pessoas mortas + curadas" + quantityDeadPeople + " + " +quantityHealedPeople);
-				
-					if (climate == 'H') {
-						temperature = random.nextInt((Constants.MAX_HEAT_TEMPERATURE - Constants.MIN_HEAT_TEMPERATURE) + 1) + Constants.MIN_HEAT_TEMPERATURE;
-					} else if (climate == 'C') {
-						temperature = random.nextInt((Constants.MAX_COLD_TEMPERATURE - Constants.MIN_COLD_TEMPERATURE) + 1) + Constants.MIN_COLD_TEMPERATURE;
-					}
+					updateTemperature();
 					
 					System.out.println("TEMPERATURE " + getAID().getName() + " " + temperature);
 					
-					
 					if (plagueDeathPotential == 0 || plagueTemperatureIdeal == 0) {
-						
-						ACLMessage msg = receive();
-						
-						if(msg != null) {	
-							String[] results = msg.getContent().split("-", 2);
-							plagueTemperatureIdeal = Integer.parseInt(results[0]);
-							plagueDeathPotential = Integer.parseInt(results[1]);
-							System.out.println("POTENCIAL DE MORTE " + plagueDeathPotential);
-							System.out.println("TEMPERATURA IDEAL " + plagueTemperatureIdeal);
-						 
-						} else {
-							System.out.println("Block");
-							block();
-						}
+						receiveMessagePlague();
 					}
 					
-					for (Person person : people) {
-						if (person.isInfected()) {
-							person.incrementDaysInfected();
-							if (person.getDaysInfected() == plagueDeathPotential && !person.isHealed()) {
-								regionGUI.showDeadPerson(person);
-								person.setDead(true);
-								quantityDeadPeople++;
-							}
-						}
-					}
+					updateDeath();
 					
-					System.out.println("A taxa de transimissao atual eh: " + rateTransmissionGeneral);
+					verifyInfectByTemperature();
+			}
+		}
+
+		private void verifyInfectByTemperature() {
+			if (temperature >= plagueTemperatureIdeal - Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION &&  temperature <= plagueTemperatureIdeal + Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION) {
+				infect();
+				
+				rateTransmissionVariable += rateTransmissionGeneral * quantityInfectedPeople;
+				
+				if(((int) rateTransmissionVariable) > quantityInfectedPeople && ((int) rateTransmissionVariable) < quantityTotalPeople) {
+					infect();
+				} else if(((int) rateTransmissionVariable) >= quantityTotalPeople) {
 					
-					if (temperature >= plagueTemperatureIdeal - Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION &&  temperature <= plagueTemperatureIdeal + Constants.PLAGUE_TEMPERATURE_IDEAL_VARIATION) {
+					if(rateTransmissionVariable > quantityInfectedPeople) {
+						rateTransmissionVariable = quantityTotalPeople;
 						infect();
-						
-						rateTransmissionVariable += rateTransmissionGeneral * quantityInfectedPeople;
-						System.out.println(rateTransmissionVariable);
-						
-						if(((int) rateTransmissionVariable) > quantityInfectedPeople && ((int) rateTransmissionVariable) < quantityTotalPeople) {
-							infect();
-						} else if(((int) rateTransmissionVariable) >= quantityTotalPeople) {
-							
-							if(rateTransmissionVariable > quantityInfectedPeople) {
-								rateTransmissionVariable = quantityTotalPeople;
-								infect();
-							}
-						}
-					} else {
-						System.out.println("A temperatura não está ok para proliferar");
 					}
+				}
+			} else {
+				System.out.println("Temperature in " + myAgent.getName() + " is not ideal to proliferation!");
+			}
+		}
+		
+		private void infect() {
+			
+			while(quantityInfectedPeople < rateTransmissionVariable || quantityInfectedPeople == 0) {
 				
+				Person personToInfect = people.get( random.nextInt(people.size()) );
+				while (personToInfect.isInfected() || personToInfect.isDead()) {
+					personToInfect = people.get( random.nextInt(people.size()) );
+				}
 				
-				
+				regionGUI.showInfectedPerson(personToInfect);
+				quantityInfectedPeople++;
+				personToInfect.setInfected(true);
+			}
+			
+		}
+
+		private void updateTemperature() {
+			if (climate == 'H') {
+				temperature = random.nextInt((Constants.MAX_HEAT_TEMPERATURE - Constants.MIN_HEAT_TEMPERATURE) + 1) + Constants.MIN_HEAT_TEMPERATURE;
+			} else if (climate == 'C') {
+				temperature = random.nextInt((Constants.MAX_COLD_TEMPERATURE - Constants.MIN_COLD_TEMPERATURE) + 1) + Constants.MIN_COLD_TEMPERATURE;
+			}
+		}
+
+		private void receiveMessagePlague() {
+			ACLMessage msg = receive();
+			if(msg != null) {
+				myAgent.doWake();
+				String[] results = msg.getContent().split("-", 2);
+				plagueTemperatureIdeal = Integer.parseInt(results[0]);
+				plagueDeathPotential = Integer.parseInt(results[1]);
+			} else {
+				myAgent.doWait();
+				block();
+			}
+		}
+
+		private void updateDeath() {
+			for (Person person : people) {
+				if (person.isInfected()) {
+					person.incrementDaysInfected();
+					if (person.getDaysInfected() == plagueDeathPotential && !person.isHealed()) {
+						regionGUI.showDeadPerson(person);
+						person.setDead(true);
+						quantityDeadPeople++;
+					}
+				}
+			}
+		}
+
+		private void cure() {
+			Collections.shuffle(people);
+			int flag = 0;
+			for (Person p : people) {
+				if (p.isInfected() == true && p.isDead() == false && p.isHealed() == false && flag <= healedPersonsADay) {
+					p.setHealed(true);
+					regionGUI.showHealedPerson(p);
+					flag += 1;
+					quantityHealedPeople++;
+				}
 			}
 		}
 	}

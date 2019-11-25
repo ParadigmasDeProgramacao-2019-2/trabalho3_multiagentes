@@ -13,7 +13,7 @@ public class Main {
 	private static AgentController agentController;
 
 	public static void main(String[] args) {
-		startMainContainer("127.0.0.1", Profile.LOCAL_PORT, "UFABC");
+		startMainContainer("127.0.0.1", Profile.LOCAL_PORT, "FGA");
 		
 		Object[] cold = {(Object) 'C'};
 		Object[] heat = {(Object) 'H'};
